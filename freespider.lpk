@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <Package Version="4">
+    <Name Value="FreeSpider"/>
+    <AddToProjectUsesSection Value="True"/>
+    <Author Value="Motaz Abdel Azeem Altahir"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+      <Parsing>
+        <SyntaxOptions>
+          <CStyleOperator Value="False"/>
+          <UseAnsiStrings Value="False"/>
+        </SyntaxOptions>
+      </Parsing>
+      <Other>
+        <Verbosity>
+          <ShowSummary Value="True"/>
+        </Verbosity>
+        <CompilerMessages>
+          <UseMsgFile Value="True"/>
+        </CompilerMessages>
+        <CompilerPath Value="$(CompPath)"/>
+      </Other>
+    </CompilerOptions>
+    <Description Value="Web application development for Lazarus, using CGI protocol"/>
+    <License Value="LGPL
+"/>
+    <Version Major="1" Minor="2" Release="6" Build="23"/>
+    <Files Count="8">
+      <Item1>
+        <Filename Value="spidercgi.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="SpiderCGI"/>
+      </Item1>
+      <Item2>
+        <Filename Value="spiderutils.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="SpiderUtils"/>
+      </Item2>
+      <Item3>
+        <Filename Value="spideraction.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="SpiderAction"/>
+      </Item3>
+      <Item4>
+        <Filename Value="spidertable.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="SpiderTable"/>
+      </Item4>
+      <Item5>
+        <Filename Value="spiderpage.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="SpiderPage"/>
+      </Item5>
+      <Item6>
+        <Filename Value="spiderform.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="SpiderForm"/>
+      </Item6>
+      <Item7>
+        <Filename Value="freespiderideintf.pas"/>
+        <HasRegisterProc Value="True"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="FreeSpiderIDEIntf"/>
+      </Item7>
+      <Item8>
+        <Filename Value="register_freespider.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="register_freespider"/>
+      </Item8>
+    </Files>
+    <Type Value="RunAndDesignTime"/>
+    <RequiredPkgs Count="1">
+      <Item1>
+        <PackageName Value="IDEIntf"/>
+      </Item1>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IgnoreBinaries Value="False"/>
+    </PublishOptions>
+    <CustomOptions Items="ExternHelp" Version="2">
+      <_ExternHelp Items="Count"/>
+    </CustomOptions>
+  </Package>
+</CONFIG>
