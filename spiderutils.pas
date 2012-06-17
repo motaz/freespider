@@ -6,7 +6,7 @@
   email:        motaz@code.sd
   Home page:    http://code.sd
   License:      LGPL
-  Last modifie: 24.Apr.2010
+  Last modifie: 17.June.2012
 
   Jul/2010 - Modified by Luiz Américo
     * Remove LCL dependency
@@ -103,6 +103,8 @@ type
     property Content: TStringList read fContent;
     property ContentType: string read fContentType write fContentType;
     property CustomHeader: TStringList read fCustomHeader;
+
+    procedure SendRedirect(AUrl: string; RedirectionHint: string = 'Redirecting..');
 
     constructor Create;
     destructor Destroy; override;
@@ -393,6 +395,24 @@ end;
 procedure TSpiderResponse.Add(HTMLText: string);
 begin
   Content.Add(HTMLText);
+end;
+
+// by: xinyiman
+
+procedure TSpiderResponse.SendRedirect(AUrl: string; RedirectionHint: string = 'Redirecting..');
+begin
+  with fContent do
+  begin
+    Clear;
+    Add('<HTML>');
+    Add('<HEAD>');
+    Add('<META HTTP-EQUIV="REFRESH" CONTENT="0; URL=' + AUrl + '">');
+    Add('</HEAD>');
+    Add('<BODY>');
+    Add(RedirectionHint);
+    Add('</BODY>');
+    Add('</HTML>');
+  end;
 end;
 
 end.
