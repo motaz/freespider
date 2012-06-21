@@ -397,7 +397,7 @@ begin
   Content.Add(HTMLText);
 end;
 
-// by: xinyiman
+// By: Sammarco Francesco
 
 procedure TSpiderResponse.SendRedirect(AUrl: string; RedirectionHint: string = 'Redirecting..');
 begin
