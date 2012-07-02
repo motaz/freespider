@@ -28,8 +28,8 @@
     <Description Value="Web application development for Lazarus, using CGI protocol"/>
     <License Value="LGPL
 "/>
-    <Version Major="1" Minor="2" Release="8" Build="25"/>
-    <Files Count="8">
+    <Version Major="1" Minor="2" Release="9" Build="26"/>
+    <Files Count="9">
       <Item1>
         <Filename Value="spidercgi.pas"/>
         <AddToUsesPkgSection Value="False"/>
@@ -71,6 +71,10 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="register_freespider"/>
       </Item8>
+      <Item9>
+        <Filename Value="cgiutils.pas"/>
+        <UnitName Value="cgiutils"/>
+      </Item9>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="1">

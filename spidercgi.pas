@@ -24,7 +24,7 @@ unit SpiderCGI;
 interface
 
 uses
-  Classes, SysUtils, SpiderUtils, FileUtil;
+  Classes, SysUtils, SpiderUtils, FileUtil, CGIUtils;
 
 type
 
@@ -159,7 +159,7 @@ end;
 constructor TSpiderCGI.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
-  fRequest:= TSpiderRequest.Create;
+  fRequest:= TCGIRequest.Create;
   fResponse:= TSpiderResponse.Create;
   fPath:= '/';
 end;

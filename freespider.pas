@@ -2,21 +2,21 @@
   This source is only used to compile and install the package.
  }
 
-unit FreeSpider; 
+unit FreeSpider;
 
 interface
 
 uses
-  FreeSpiderIDEIntf, register_freespider, LazarusPackageIntf;
+  FreeSpiderIDEIntf, register_freespider, CGIUtils, LazarusPackageIntf;
 
 implementation
 
-procedure Register; 
+procedure Register;
 begin
-  RegisterUnit('FreeSpiderIDEIntf', @FreeSpiderIDEIntf.Register); 
-  RegisterUnit('register_freespider', @register_freespider.Register); 
-end; 
+  RegisterUnit('FreeSpiderIDEIntf', @FreeSpiderIDEIntf.Register);
+  RegisterUnit('register_freespider', @register_freespider.Register);
+end;
 
 initialization
-  RegisterPackage('FreeSpider', @Register); 
+  RegisterPackage('FreeSpider', @Register);
 end.
