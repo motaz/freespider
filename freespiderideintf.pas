@@ -161,7 +161,7 @@ begin
     AProject.ProjectInfoFile:='project1.lpi';
     F:=AProject.CreateProjectFile('project1.lpr');
     F.IsPartOfProject:=True;
-    AProject.LazCompilerOptions.LCLWidgetType:= 'NoGui';
+//    AProject.LazCompilerOptions.LCLWidgetType:= 'NoGui';
     AProject.AddFile(F,False);
     AProject.MainFileID:=0;
     Src:=TStringList.Create;
