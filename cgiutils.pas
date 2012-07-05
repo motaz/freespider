@@ -1,7 +1,7 @@
 {
 *******************************************************************************************************************
 
-  CGIUtils:  Contains Request and Response classes for CGI protocol
+  CGIUtils:  Contains Request class for CGI protocol
   Author:       Motaz Abdel Azeem
   email:        motaz@code.sd
   Home page:    http://code.sd

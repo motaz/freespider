@@ -7,7 +7,7 @@ interface
 
 uses 
   Classes, SysUtils, LResources, LazarusPackageIntf,
-  SpiderCGI, SpiderAction, SpiderForm, SpiderTable, SpiderPage;
+  SpiderCGI, SpiderAction, SpiderForm, SpiderTable, SpiderPage, SpiderApache;
   
 procedure Register;
 
@@ -41,6 +41,11 @@ begin
   RegisterComponents(ComponentPage, [TSpiderTable]);
 end;
 
+procedure RegisterUnitSpiderApache;
+begin
+  RegisterComponents(ComponentPage, [TSpiderApache]);
+end;
+
 procedure Register;
 begin
   RegisterUnit('SpiderCGI',@RegisterUnitSpiderCGI);
@@ -48,9 +53,10 @@ begin
   RegisterUnit('SpiderForm',@RegisterUnitSpiderForm);
   RegisterUnit('SpiderPage',@RegisterUnitSpiderPage);
   RegisterUnit('SpiderTable',@RegisterUnitSpiderTable);
-end; 
+  RegisterUnit('SpiderApache',@RegisterUnitSpiderApache);
+end;
 
 initialization
 {$i spidericons.lrs}
  
-end.
+end.

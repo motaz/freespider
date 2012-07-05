@@ -28,8 +28,8 @@
     <Description Value="Web application development for Lazarus, using CGI protocol"/>
     <License Value="LGPL
 "/>
-    <Version Major="1" Minor="2" Release="9" Build="26"/>
-    <Files Count="9">
+    <Version Major="1" Minor="2" Release="10" Build="27"/>
+    <Files Count="11">
       <Item1>
         <Filename Value="spidercgi.pas"/>
         <AddToUsesPkgSection Value="False"/>
@@ -73,8 +73,17 @@
       </Item8>
       <Item9>
         <Filename Value="cgiutils.pas"/>
-        <UnitName Value="cgiutils"/>
+        <UnitName Value="CGIUtils"/>
       </Item9>
+      <Item10>
+        <Filename Value="spiderapache.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="SpiderApache"/>
+      </Item10>
+      <Item11>
+        <Filename Value="apacheutils.pas"/>
+        <UnitName Value="ApacheUtils"/>
+      </Item11>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="1">

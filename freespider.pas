@@ -7,7 +7,8 @@ unit FreeSpider;
 interface
 
 uses
-  FreeSpiderIDEIntf, register_freespider, CGIUtils, LazarusPackageIntf;
+  FreeSpiderIDEIntf, register_freespider, CGIUtils, ApacheUtils, 
+  LazarusPackageIntf;
 
 implementation
 
