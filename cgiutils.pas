@@ -186,6 +186,9 @@ begin
   fRemoteAddress:= GetEnvironmentVariable('REMOTE_ADDR');
   fContentType:= GetEnvironmentVariable('CONTENT_TYPE');
   fQueryString:= GetEnvironmentVariable('QUERY_STRING');
+  fPathInfo:= Trim(LowerCase(GetEnvironmentVariable('PATH_INFO')));
+  if (fPathInfo <> '') and (fPathInfo[Length(fPathInfo)] = '/') then
+    fPathInfo:= Copy(fPathInfo, 1, Length(fPathInfo) - 1);
 end;
 
 procedure TCGIRequest.DisplayErrorMessage(Msg: string);

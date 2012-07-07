@@ -6,7 +6,7 @@
   email:        motaz@code.sd
   Home page:    http://code.sd
   License:      LGPL
-  Last modifie: 2.July.2012
+  Last modifie: 7.July.2012
 
   Jul/2010 - Modified by Luiz Américo
     * Remove LCL dependency
@@ -50,6 +50,7 @@ type
     fRemoteAddress: string;
     fContentType: string;
     fQueryString: string;
+    fContentLength: string;
 
     fQueryFields: TStringList;
 
@@ -61,12 +62,14 @@ type
     fBoundary: string;
     fFilesCount: Integer;
     fFiles: TRequestFiles;
+    fPathInfo: string;
 
     procedure ReadCookies; virtual; abstract;
     procedure DecodeMultiPart; virtual; abstract;
     function ReadContent: string; virtual; abstract;
     procedure DisplayErrorMessage(Msg: string); virtual; abstract;
     procedure ReadVariables; virtual; abstract;
+    procedure DecodeRequest(AText: string; var List: TStringList);
 
   public
     constructor Create;
@@ -83,6 +86,7 @@ type
     property ContentType: string read fContentType;
     property FilesCount: Integer read fFilesCount;
     property ContentFiles: TRequestFiles read fFiles;
+    property PathInfo: string read fPathInfo;
 
     property Cookies: TStringList read fCookieList;
   end;
@@ -119,7 +123,7 @@ implementation
 
 { TRequest }
 
-procedure  DecodeRequest(AText: string; var List: TStringList);
+procedure  TSpiderRequest.DecodeRequest(AText: string; var List: TStringList);
 var
   i: Integer;
   Hex: string;

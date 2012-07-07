@@ -25,7 +25,7 @@ type
     { Protected declarations }
   public
     constructor Create(TheOwner: TComponent); override;
-    procedure Init(PathInfo, RequestMethod, Query, Cookies, UserAgent, PostedData: string);
+    procedure Init(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData, ContentLength: string);
     destructor Destroy; override;
     function Execute: TSpiderResponse;
     { Public declarations }
@@ -76,14 +76,16 @@ begin
   inherited Create(TheOwner);
 end;
 
-procedure TSpiderApache.Init(PathInfo, RequestMethod, Query, Cookies, UserAgent, PostedData: string);
+procedure TSpiderApache.Init(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData,
+  ContentLength: string);
 begin
   if (PathInfo <> '') and (PathInfo[Length(PathInfo)] = '/') then
     PathInfo:= Copy(PathInfo, 1, Length(PathInfo) - 1);
   fPathInfo:= Trim(PathInfo);
 
   if not Assigned(fRequest) then
-    fRequest:= TApacheRequest.Create(RequestMethod, Query, Cookies, UserAgent, PostedData);
+    fRequest:= TApacheRequest.Create(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData,
+      ContentLength);
 end;
 
 destructor TSpiderApache.Destroy;
