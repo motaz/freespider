@@ -29,7 +29,7 @@
     <License Value="LGPL
 "/>
     <Version Major="1" Minor="2" Release="10" Build="27"/>
-    <Files Count="11">
+    <Files Count="12">
       <Item1>
         <Filename Value="spidercgi.pas"/>
         <AddToUsesPkgSection Value="False"/>
@@ -84,6 +84,11 @@
         <Filename Value="apacheutils.pas"/>
         <UnitName Value="ApacheUtils"/>
       </Item11>
+      <Item12>
+        <Filename Value="apacheadapter.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="apacheadapter"/>
+      </Item12>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="1">

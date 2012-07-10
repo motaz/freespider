@@ -45,6 +45,23 @@ Type
     { Published declarations }
   end;
 
+  { TFreeSpiderApacheProjectDescriptor }
+
+  TFreeSpiderApacheProjectDescriptor = class(TProjectDescriptor)
+  public
+    constructor create; override;
+    function GetLocalizedName: string; override;
+    function GetLocalizedDescription: string; override;
+    function InitProject(AProject: TLazProject) : TModalResult; override;
+    function CreateStartFiles(AProject: TLazProject) : TModalResult; override;
+  published
+    { Published declarations }
+  end;
+
+  { TFreeSpiderApacheSecondaryDescriptor }
+
+
+
 Procedure Register;
 
 implementation
@@ -60,16 +77,105 @@ Resourcestring
   SSpiderModuleName  = 'Data Module';
   SSpiderModuleDescr = 'Data Module contains SpiderCGI, and other components';
 
+  ASpiderApps = 'FreeSpider Apache Module web application';
+  ASpiderAppName = 'FreeSpider Apache moule application';
+  ASpiderAppDescr = 'FreeSpider apache module library';
+
+
 
 Procedure Register;
 
 begin
   RegisterNewItemCategory(TNewIDEItemCategory.Create(SSpiderApps));
-  RegisterProjectDescriptor(TFreeSpiderProjectDescriptor.Create,SSpiderApps);
+  RegisterProjectDescriptor(TFreeSpiderProjectDescriptor.Create, SSpiderApps);
   //RegisterProjectFileDescriptor(TFreeSpiderFileDescriptor.Create,SSpiderApps);
-  RegisterProjectFileDescriptor(TFreeSpiderModuleDescriptor.Create,SSpiderApps);
+  RegisterProjectFileDescriptor(TFreeSpiderModuleDescriptor.Create, SSpiderApps);
  // FormEditingHook.RegisterDesignerBaseClass(TSpiderMapper);
 //  FormEditingHook.RegisterDesignerBaseClass(TSpider);
+
+  // Apache module
+  RegisterNewItemCategory(TNewIDEItemCategory.Create(ASpiderApps));
+  RegisterProjectDescriptor(TFreeSpiderApacheProjectDescriptor.Create, ASpiderApps);
+  RegisterProjectFileDescriptor(TFreeSpiderModuleDescriptor.Create, ASpiderApps);
+end;
+
+
+{ TFreeSpiderApacheProjectDescriptor }
+
+constructor TFreeSpiderApacheProjectDescriptor.create;
+begin
+  inherited create;
+  Flags:= Flags - [pfMainUnitHasCreateFormStatements];
+  Name:= 'Spider Apache Module Application';
+end;
+
+function TFreeSpiderApacheProjectDescriptor.GetLocalizedName: string;
+begin
+  //Result:= inherited GetLocalizedName;
+  Result:= ASpiderAppName;
+end;
+
+function TFreeSpiderApacheProjectDescriptor.GetLocalizedDescription: string;
+begin
+  //Result:= inherited GetLocalizedDescription;
+  Result:= ASpiderAppDescr;
+end;
+
+function TFreeSpiderApacheProjectDescriptor.InitProject(AProject: TLazProject): TModalResult;
+Var
+  F : TLazProjectFile;
+  Src : TStrings;
+begin
+  Result:= Inherited InitProject(AProject);
+  If (Result=mrOK) then
+    begin
+    AProject.AddPackageDependency('FreeSpider');
+    AProject.Title:= 'Spider Apache Module';
+    AProject.LazCompilerOptions.Win32GraphicApp:= False;
+    AProject.ProjectInfoFile:= 'apachemod1.lpi';
+    F:= AProject.CreateProjectFile('apachemod1.lpr');
+    F.IsPartOfProject:= True;
+    AProject.AddFile(F, False);
+    AProject.MainFileID:= 0;
+    Src:= TStringList.Create;
+    try
+      With Src do
+        begin
+        Add('library ApacheMod1;');
+        Add('');
+        Add('Uses');
+        Add('{$IFDEF UNIX}{$IFDEF UseCThreads}');
+        Add('  CThreads,');
+        Add('{$ENDIF}{$ENDIF}');
+        Add('uses SysUtils, httpd, ApacheAdapter, apr, Web, Classes, SpiderApache, SpiderUtils;');
+        Add('');
+        Add('const');
+        Add('          MODULE_NAME = ''mod_proj1.so'';');
+        Add('          MODNAME = ''apache_mod1'';');
+        Add('          HANDLER_NAME = ''freespider-handler'';');
+        Add('');
+
+        Add('begin');
+        Add('-- some code');
+        Add('  DataModule1:= TDataModule1.Create(nil)');
+        Add('end.');
+        end;
+      F.SetSourceText(Src.Text);
+    finally
+      Src.Free;
+    end;
+   end;
+end;
+
+function TFreeSpiderApacheProjectDescriptor.CreateStartFiles(
+  AProject: TLazProject): TModalResult;
+Var
+  FD : TProjectFileDescriptor;
+  O : TNewFlags;
+begin
+  FD:= ProjectFileDescriptors.FindByName('DataModule1');
+  O:= [nfIsPartOfProject, nfOpenInEditor, nfCreateDefaultSrc];
+  Result:= LazarusIDE.DoNewEditorFile(FD, 'main.pas', '', O);
 end;
 
 
@@ -78,9 +184,9 @@ end;
 constructor TFreeSpiderFileDescriptor.Create;
 begin
   inherited Create;
-  ResourceClass:=TDataModule;
-  Name:='Data Module';
-  UseCreateFormStatements:=False;
+  ResourceClass:= TDataModule;
+  Name:= 'Data Module';
+  UseCreateFormStatements:= False;
 end;
 
 function TFreeSpiderFileDescriptor.GetLocalizedName: String;
@@ -95,7 +201,7 @@ end;
 
 function TFreeSpiderFileDescriptor.GetInterfaceUsesSection: String;
 begin
-  Result:=inherited GetInterfaceUsesSection+'';
+  Result:= inherited GetInterfaceUsesSection + '';
 end;
 
 function TFreeSpiderFileDescriptor.GetImplementationSource(const Filename,
@@ -105,18 +211,18 @@ Var
 begin
   Src:=TStringList.Create;
   try
-  Result:=inherited GetImplementationSource(Filename, SourceName, ResourceName);
+    Result:= inherited GetImplementationSource(Filename, SourceName, ResourceName);
     With Src do
-      begin
+    begin
       Add('Procedure RegisterSpider;');
       Add('begin');
-      Add('  RegisterSpiderClass(T'+ResourceName+')');
+      Add('  RegisterSpiderClass(T'+ ResourceName + ')');
       Add('end;');
       Add('');
       Add(Result);
       Add('  RegisterSpider;');
       Result:=Text;
-      end;
+    end;
   finally
     Src.Free;
   end;
@@ -128,43 +234,42 @@ constructor TFreeSpiderProjectDescriptor.create;
 
 begin
   Inherited;
-  Flags:=Flags - [pfMainUnitHasCreateFormStatements];
-  Name:='Spider Application';
+  Flags:= Flags - [pfMainUnitHasCreateFormStatements];
+  Name:= 'Spider Application';
 end;
 
 
 function TFreeSpiderProjectDescriptor.GetLocalizedName: string;
 begin
-  Result:=SSpiderAppName;
+  Result:= SSpiderAppName;
 end;
 
 function TFreeSpiderProjectDescriptor.GetLocalizedDescription: string;
 begin
-  Result:=SSpiderAppDescr;
+  Result:= SSpiderAppDescr;
 end;
 
 function TFreeSpiderProjectDescriptor.InitProject(AProject: TLazProject): TModalResult;
-
 Var
   F : TLazProjectFile;
   Src : TStrings;
 
 begin
-  Result:=Inherited InitProject(AProject);
+  Result:= Inherited InitProject(AProject);
   If (Result=mrOK) then
     begin
 {    AProject.AddPackageDependency('FCL');
     AProject.AddPackageDependency('LCL');}
     AProject.AddPackageDependency('FreeSpider');
-    AProject.Title:='Spider application';
+    AProject.Title:= 'Spider application';
     AProject.LazCompilerOptions.Win32GraphicApp:=False;
-    AProject.ProjectInfoFile:='project1.lpi';
-    F:=AProject.CreateProjectFile('project1.lpr');
-    F.IsPartOfProject:=True;
-//    AProject.LazCompilerOptions.LCLWidgetType:= 'NoGui';
+    AProject.ProjectInfoFile:= 'project1.lpi';
+    F:= AProject.CreateProjectFile('project1.lpr');
+    F.IsPartOfProject:= True;
+   // AProject.LazCompilerOptions.LCLWidgetType:= 'NoGui';
     AProject.AddFile(F,False);
-    AProject.MainFileID:=0;
-    Src:=TStringList.Create;
+    AProject.MainFileID:= 0;
+    Src:= TStringList.Create;
     try
       With Src do
         begin
@@ -189,17 +294,13 @@ begin
 end;
 
 function TFreeSpiderProjectDescriptor.CreateStartFiles(AProject: TLazProject): TModalResult;
-
 Var
   FD : TProjectFileDescriptor;
   O : TNewFlags;
-
 begin
-  FD:=ProjectFileDescriptors.FindByName('DataModule1');
-  O:=[nfIsPartOfProject,nfOpenInEditor,nfCreateDefaultSrc];
-  Result:=LazarusIDE.DoNewEditorFile(FD,'main.pas','',O);
-//  FD:=ProjectFileDescriptors.FindByName('freeSpider Data Modul');
-//  Result:=LazarusIDE.DoNewEditorFile(FD,'SpiderUnit1.pas','',O );
+  FD:= ProjectFileDescriptors.FindByName('DataModule1');
+  O:= [nfIsPartOfProject, nfOpenInEditor, nfCreateDefaultSrc];
+  Result:= LazarusIDE.DoNewEditorFile(FD, 'main.pas','',O);
 end;
 
 { TFreeSpiderModuleDescriptor }

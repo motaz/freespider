@@ -18,6 +18,8 @@ type
     fResponse: TSpiderResponse;
     fPath: string;
     fPathInfo: string;
+    fModules: array of String;
+    fPathList: array of TStringList;
     function SearchActionInModule(APath: string; AModule: TDataModule): Boolean;
 
     { Private declarations }
@@ -28,6 +30,7 @@ type
     procedure Init(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData, ContentLength: string);
     destructor Destroy; override;
     function Execute: TSpiderResponse;
+    procedure AddDataModule(const ADataModuleClassName: string; APaths: array of string);
     { Public declarations }
   published
     property OnRequest: TSpiderEvent read FOnRequest  write FOnRequest;
@@ -44,18 +47,37 @@ implementation
 function TSpiderApache.Execute: TSpiderResponse;
 var
   Found: Boolean;
+  i: Integer;
+  dmc: TDataModuleClass;
+  DataMod: TDataModule;
 begin
   // Search path in main module actions
   Found:= False;
   if fPathInfo <> '' then
   begin
     Found:= SearchActionInModule(fPathInfo, TDataModule(Owner));
-    if not Found then
-      fResponse.Add(fPathInfo + ' not found');
+  end;
+  DataMod:= nil;
+
+  // Search path in other additional modules
+  if (not Found) then
+  for i:= 0 to High(fModules) do
+  if fPathList[i].IndexOf(fPathInfo) <> -1 then
+  begin
+    dmc:= TDataModuleClass(FindClass(fModules[i]));
+    if dmc <> nil then
+    begin
+      DataMod:= dmc.Create(nil);
+      Found:= SearchActionInModule(fPathInfo, DataMod);
+    end;
+    if Found then
+      Break;
   end;
 
+  // Default path /
   if (not Found) and (fPathInfo = '') and (Assigned(fOnRequest)) then
   begin
+    Found:= True;
     if fRequest = nil then
       raise Exception.Create('TSpiderApache: Request object is not initialized');
     if fResponse = nil then
@@ -64,7 +86,14 @@ begin
     fOnRequest(Self, fRequest, fResponse);
     Result:= fResponse;
   end;
+
+  if not Found then
+    fResponse.Add(fPathInfo + ' not found');
+
   Result:= fResponse;
+
+  if Assigned(DataMod) then
+    DataMod.Free;
 
 end;
 
@@ -111,6 +140,18 @@ begin
       Result:= True;
       Break;
     end;
+end;
+
+procedure TSpiderApache.AddDataModule(const ADataModuleClassName: string; APaths: array of string);
+var
+  i: Integer;
+begin
+  SetLength(fModules, Length(fModules) + 1);
+  fModules[High(fModules)]:= ADataModuleClassName;
+  SetLength(fPathList, Length(fPathList) + 1);
+  fPathList[High(fPathList)]:= TStringList.Create;
+  for i:= 0 to High(APaths) do
+    fPathList[High(fPathList)].Add(LowerCase(APaths[i]));
 end;
 
 
