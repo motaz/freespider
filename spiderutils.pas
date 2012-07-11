@@ -63,6 +63,7 @@ type
     fFilesCount: Integer;
     fFiles: TRequestFiles;
     fPathInfo: string;
+    fReferer: string;
 
     procedure ReadCookies; virtual; abstract;
     procedure DecodeMultiPart; virtual; abstract;
@@ -87,6 +88,7 @@ type
     property FilesCount: Integer read fFilesCount;
     property ContentFiles: TRequestFiles read fFiles;
     property PathInfo: string read fPathInfo;
+    property Referer: string read fReferer;
 
     property Cookies: TStringList read fCookieList;
   end;

@@ -84,7 +84,8 @@ begin
       if Trim(ContentType) = '' then
         ContentType:= r^.content_type;
       SpiderApacheObj.Init(r^.path_info, ContentType, r^.method, r^.args, apr_table_get(r^.headers_in, 'COOKIE'),
-      apr_table_get(r^.headers_in, 'User-Agent'), Posteddata, apr_table_get(r^.headers_in, 'Content-Length'));
+      apr_table_get(r^.headers_in, 'User-Agent'), Posteddata, apr_table_get(r^.headers_in, 'Content-Length'),
+        apr_table_get(r^.headers_in, 'REFERER'), r^.connection^.remote_ip);
       aResponse:= SpiderApacheObj.Execute;
       if Assigned(aResponse) then
       begin
@@ -93,7 +94,6 @@ begin
         for j:= 0 to Count - 1 do
           apr_table_set(r^.headers_out, PChar(Copy(Strings[j], 1, Pos(':', Strings[j]) - 1)),
             PChar(Copy(Strings[j], Pos(':', Strings[j]) + 1, Length(Strings[j])) ));
-        //ap_rputs(PChar(aResponse.Content.Text), r);
         DataLen:= Length(aResponse.Content.Text);
         Data:= GetMem(DataLen);
         Move(Pointer(aResponse.Content.Text)^, Data^, DataLen);

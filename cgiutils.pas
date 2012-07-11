@@ -189,6 +189,7 @@ begin
   fPathInfo:= Trim(LowerCase(GetEnvironmentVariable('PATH_INFO')));
   if (fPathInfo <> '') and (fPathInfo[Length(fPathInfo)] = '/') then
     fPathInfo:= Copy(fPathInfo, 1, Length(fPathInfo) - 1);
+  fReferer:= Trim(LowerCase(GetEnvironmentVariable('HTTP_REFERER')));
 end;
 
 procedure TCGIRequest.DisplayErrorMessage(Msg: string);

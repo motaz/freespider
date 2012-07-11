@@ -23,7 +23,7 @@ type
     procedure DisplayErrorMessage(Msg: string); override;
   public
     constructor Create(aPathInfo, aContentType, aRequestMethod, aQuery, aCookies, aUserAgent, PostedData,
-      ContentLength: string);
+      ContentLength, aReferer, aRemoteIP: string);
   end;
 
 
@@ -203,7 +203,7 @@ begin
 end;
 
 constructor TApacheRequest.Create(aPathInfo, aContentType, aRequestMethod, aQuery, aCookies, aUserAgent, PostedData,
-  ContentLength: string);
+  ContentLength, aReferer, aRemoteIP: string);
 begin
   fPathInfo:= aPathInfo;
   fContentType:= aContentType;
@@ -213,6 +213,8 @@ begin
   fCookies:= aCookies;
   fPostedData:= PostedData;
   fContentLength:= ContentLength;
+  fReferer:= aReferer;
+  fRemoteAddress:= aRemoteIP;
   inherited Create;
 end;
 

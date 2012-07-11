@@ -27,7 +27,8 @@ type
     { Protected declarations }
   public
     constructor Create(TheOwner: TComponent); override;
-    procedure Init(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData, ContentLength: string);
+    procedure Init(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData,
+      ContentLength, Referer, RemoteIP: string);
     destructor Destroy; override;
     function Execute: TSpiderResponse;
     procedure AddDataModule(const ADataModuleClassName: string; APaths: array of string);
@@ -106,7 +107,7 @@ begin
 end;
 
 procedure TSpiderApache.Init(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData,
-  ContentLength: string);
+  ContentLength, Referer, RemoteIP: string);
 begin
   if (PathInfo <> '') and (PathInfo[Length(PathInfo)] = '/') then
     PathInfo:= Copy(PathInfo, 1, Length(PathInfo) - 1);
@@ -114,7 +115,7 @@ begin
 
   if not Assigned(fRequest) then
     fRequest:= TApacheRequest.Create(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData,
-      ContentLength);
+      ContentLength, Referer, RemoteIP);
 end;
 
 destructor TSpiderApache.Destroy;
