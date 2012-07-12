@@ -1,12 +1,12 @@
 {
 *******************************************************************************************************************
 
-  CGIUtils:  Contains Request class for CGI protocol
+  CGIUtils:  Contains TCGIRequest class for CGI protocol
   Author:       Motaz Abdel Azeem
   email:        motaz@code.sd
   Home page:    http://code.sd
   License:      LGPL
-  Last modifie: 2.July.2012
+  Last modifie: 12.July.2012
 
 *******************************************************************************************************************
 }
@@ -186,10 +186,17 @@ begin
   fRemoteAddress:= GetEnvironmentVariable('REMOTE_ADDR');
   fContentType:= GetEnvironmentVariable('CONTENT_TYPE');
   fQueryString:= GetEnvironmentVariable('QUERY_STRING');
-  fPathInfo:= Trim(LowerCase(GetEnvironmentVariable('PATH_INFO')));
+  fURI:= LowerCase(GetEnvironmentVariable('REQUEST_URI'));
+  fWebServerSoftware:= LowerCase(GetEnvironmentVariable('SERVER_SOFTWARE'));
+
+  fPathInfo:= Trim(GetEnvironmentVariable('PATH_INFO'));
   if (fPathInfo <> '') and (fPathInfo[Length(fPathInfo)] = '/') then
     fPathInfo:= Copy(fPathInfo, 1, Length(fPathInfo) - 1);
+
   fReferer:= Trim(LowerCase(GetEnvironmentVariable('HTTP_REFERER')));
+
+  fIsApache:= False;
+  fIsCGI:= True;
 end;
 
 procedure TCGIRequest.DisplayErrorMessage(Msg: string);

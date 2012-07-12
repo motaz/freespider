@@ -1,5 +1,19 @@
 unit apacheadapter;
 
+{
+*******************************************************************************************************************
+
+  ApaacheApapter:  Decodes Apache Module reqeuest and response, triggers ApacheModule component
+  Author:       Motaz Abdel Azeem
+  email:        motaz@code.sd
+  Home page:    http://code.sd
+  License:      LGPL
+  Last modifie: 12.July.2012
+
+*******************************************************************************************************************
+}
+
+
 {$mode objfpc}{$H+}
 
 interface
@@ -15,7 +29,7 @@ implementation
 function ProcessHandler(r: Prequest_rec; WebModule: TDataModuleClass; ModuleName, HandlerName: string): Integer;
 var
   RequestedHandler: string;
-  Buf: array [0 .. 900024] of Char;
+  Buf: array [0 .. 20024] of Char;
   NumRead: Integer;
   Line: string;
   Head: Papr_array_header_t;
@@ -85,7 +99,7 @@ begin
         ContentType:= r^.content_type;
       SpiderApacheObj.Init(r^.path_info, ContentType, r^.method, r^.args, apr_table_get(r^.headers_in, 'COOKIE'),
       apr_table_get(r^.headers_in, 'User-Agent'), Posteddata, apr_table_get(r^.headers_in, 'Content-Length'),
-        apr_table_get(r^.headers_in, 'REFERER'), r^.connection^.remote_ip);
+        apr_table_get(r^.headers_in, 'REFERER'), r^.connection^.remote_ip, r^.uri, ap_get_server_version);
       aResponse:= SpiderApacheObj.Execute;
       if Assigned(aResponse) then
       begin

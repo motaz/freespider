@@ -6,7 +6,7 @@
   email:        motaz@code.sd
   Home page:    http://code.sd
   License:      LGPL
-  Last modifie: 7.July.2012
+  Last modifie: 12.July.2012
 
   Jul/2010 - Modified by Luiz Américo
     * Remove LCL dependency
@@ -64,6 +64,10 @@ type
     fFiles: TRequestFiles;
     fPathInfo: string;
     fReferer: string;
+    fIsCGI: Boolean;
+    fIsApache: Boolean;
+    fURI: string;
+    fWebServerSoftware: string;
 
     procedure ReadCookies; virtual; abstract;
     procedure DecodeMultiPart; virtual; abstract;
@@ -71,6 +75,7 @@ type
     procedure DisplayErrorMessage(Msg: string); virtual; abstract;
     procedure ReadVariables; virtual; abstract;
     procedure DecodeRequest(AText: string; var List: TStringList);
+    function GetRootURI: string;
 
   public
     constructor Create;
@@ -89,6 +94,12 @@ type
     property ContentFiles: TRequestFiles read fFiles;
     property PathInfo: string read fPathInfo;
     property Referer: string read fReferer;
+    property URI: string read fURI;
+    property RootURI: string read GetRootURI;
+    property WebServerSoftware: string read fWebServerSoftware;
+
+    property IsCGI: Boolean read fIsCGI;
+    property IsApache: Boolean read fIsApache;
 
     property Cookies: TStringList read fCookieList;
   end;
@@ -218,6 +229,18 @@ end;
 function TSpiderRequest.GetCookie(AName: string): string;
 begin
   Result:= fCookieList.Values[AName];
+end;
+
+function TSpiderRequest.GetRootURI: string;
+begin
+  if fPathInfo = '/' then
+    Result:= fURI
+  else
+  begin
+    Result:= Copy(fURI, 1, Length(fURI) - Length(fPathInfo));
+    if (Result <> '') and (Result[Length(Result)]  = '/') then
+      Delete(Result, Length(Result), 1);
+  end;
 end;
 
 { TSpiderResponse }

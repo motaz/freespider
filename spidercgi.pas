@@ -78,6 +78,10 @@ var
 
 begin
   try
+  {$IFDEF apachemodule}
+    Exit;
+  {$ENDIF}
+
     APath:= Trim(LowerCase(GetEnvironmentVariable('PATH_INFO')));
     if (APath <> '') and (APath[Length(APath)] = '/') then
       APath:= Copy(APath, 1, Length(APath) - 1);

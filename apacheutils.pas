@@ -1,5 +1,19 @@
 unit ApacheUtils;
 
+{
+*******************************************************************************************************************
+
+  ApacheUtils:  Contains TApacheRequest class for Apache Module
+  Author:       Motaz Abdel Azeem
+  email:        motaz@code.sd
+  Home page:    http://code.sd
+  License:      LGPL
+  Last modifie: 12.July.2012
+
+*******************************************************************************************************************
+}
+
+
 {$mode objfpc}{$H+}
 
 interface
@@ -23,7 +37,7 @@ type
     procedure DisplayErrorMessage(Msg: string); override;
   public
     constructor Create(aPathInfo, aContentType, aRequestMethod, aQuery, aCookies, aUserAgent, PostedData,
-      ContentLength, aReferer, aRemoteIP: string);
+      ContentLength, aReferer, aRemoteIP, aURI, aServerSoftware: string);
   end;
 
 
@@ -203,7 +217,7 @@ begin
 end;
 
 constructor TApacheRequest.Create(aPathInfo, aContentType, aRequestMethod, aQuery, aCookies, aUserAgent, PostedData,
-  ContentLength, aReferer, aRemoteIP: string);
+  ContentLength, aReferer, aRemoteIP, aURI, aServerSoftware: string);
 begin
   fPathInfo:= aPathInfo;
   fContentType:= aContentType;
@@ -215,6 +229,10 @@ begin
   fContentLength:= ContentLength;
   fReferer:= aReferer;
   fRemoteAddress:= aRemoteIP;
+  fURI:= aURI;
+  fWebServerSoftware:= aServerSoftware;
+  fIsCGI:= False;
+  fIsApache:= True;
   inherited Create;
 end;
 

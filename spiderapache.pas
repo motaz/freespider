@@ -1,5 +1,19 @@
 unit SpiderApache;
 
+{
+*******************************************************************************************************************
+
+  SpiderApache:  Contains TSpiderApache engine for Apache module
+  Author:       Motaz Abdel Azeem
+  email:        motaz@code.sd
+  Home page:    http://code.sd
+  License:      LGPL
+  Last modifie: 12.July.2012
+
+*******************************************************************************************************************
+}
+
+
 {$mode objfpc}{$h+}
 
 interface
@@ -28,7 +42,7 @@ type
   public
     constructor Create(TheOwner: TComponent); override;
     procedure Init(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData,
-      ContentLength, Referer, RemoteIP: string);
+      ContentLength, Referer, RemoteIP, URI, ServerSoftware: string);
     destructor Destroy; override;
     function Execute: TSpiderResponse;
     procedure AddDataModule(const ADataModuleClassName: string; APaths: array of string);
@@ -107,7 +121,7 @@ begin
 end;
 
 procedure TSpiderApache.Init(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData,
-  ContentLength, Referer, RemoteIP: string);
+  ContentLength, Referer, RemoteIP, URI, ServerSoftware: string);
 begin
   if (PathInfo <> '') and (PathInfo[Length(PathInfo)] = '/') then
     PathInfo:= Copy(PathInfo, 1, Length(PathInfo) - 1);
@@ -115,7 +129,7 @@ begin
 
   if not Assigned(fRequest) then
     fRequest:= TApacheRequest.Create(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData,
-      ContentLength, Referer, RemoteIP);
+      ContentLength, Referer, RemoteIP, URI, ServerSoftware);
 end;
 
 destructor TSpiderApache.Destroy;
