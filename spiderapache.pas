@@ -4,11 +4,11 @@ unit SpiderApache;
 *******************************************************************************************************************
 
   SpiderApache:  Contains TSpiderApache engine for Apache module
-  Author:       Motaz Abdel Azeem
-  email:        motaz@code.sd
-  Home page:    http://code.sd
-  License:      LGPL
-  Last modifie: 12.July.2012
+  Author:        Motaz Abdel Azeem
+  email:         motaz@code.sd
+  Home page:     http://code.sd
+  License:       LGPL
+  Last modified: 12.July.2012
 
 *******************************************************************************************************************
 }

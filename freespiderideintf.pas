@@ -78,8 +78,8 @@ Resourcestring
   SSpiderModuleDescr = 'Data Module contains SpiderCGI/SpiderApache and other components';
 
   ASpiderApps = 'FreeSpider Apache Module web application';
-  ASpiderAppName = 'FreeSpider Apache moule application';
-  ASpiderAppDescr = 'FreeSpider apache module library';
+  ASpiderAppName = 'FreeSpider Apache module web application';
+  ASpiderAppDescr = 'FreeSpider Apache module library';
 
 
 

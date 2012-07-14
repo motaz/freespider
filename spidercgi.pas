@@ -7,7 +7,7 @@
   email:        motaz@code.sd
   Home page:    http://code.sd
   License:      LGPL
-  Last modifie: 17.June.2012
+  Last modified: 14.July.2012
 
   Jul/2010 - Modified by Luiz Américo
     * Remove LCL dependency

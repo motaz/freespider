@@ -1,14 +1,15 @@
 unit apacheadapter;
 
+
 {
 *******************************************************************************************************************
 
   ApaacheApapter:  Decodes Apache Module reqeuest and response, triggers ApacheModule component
-  Author:       Motaz Abdel Azeem
-  email:        motaz@code.sd
-  Home page:    http://code.sd
-  License:      LGPL
-  Last modifie: 12.July.2012
+  Author:        Motaz Abdel Azeem
+  email:         motaz@code.sd
+  Home page:     http://code.sd
+  License:       LGPL
+  Last modified: 12.July.2012
 
 *******************************************************************************************************************
 }
@@ -22,11 +23,13 @@ interface
 uses
   Classes, SysUtils, httpd, apr, SpiderApache, SpiderUtils;
 
-function ProcessHandler(r: Prequest_rec; WebModule: TDataModuleClass; ModuleName, HandlerName: string): Integer;
+function ProcessHandler(r: Prequest_rec; WebModule: TDataModuleClass; ModuleName,
+  HandlerName: string): Integer;
 
 implementation
 
-function ProcessHandler(r: Prequest_rec; WebModule: TDataModuleClass; ModuleName, HandlerName: string): Integer;
+function ProcessHandler(r: Prequest_rec; WebModule: TDataModuleClass; ModuleName,
+  HandlerName: string): Integer;
 var
   RequestedHandler: string;
   Buf: array [0 .. 20024] of Char;
@@ -43,9 +46,12 @@ var
   PostedData: string;
   Data: Pointer;
   DataLen: Integer;
+  WebFound: Boolean;
+  FoundIndex: Integer;
 begin
   RequestedHandler := r^.handler;
 
+  Web:= nil;
   { We decline to handle a request if configured handler is not the value of r^.handler }
   if not SameText(RequestedHandler, HANDLERNAME) then
   begin
@@ -87,7 +93,7 @@ begin
       until NumRead = 0;
     end;
 
-    web:= WebModule.Create(nil);
+    Web:= WebModule.Create(nil);
 
     // Search for SpiderApache component in Web Data Module
     with web do
@@ -107,6 +113,7 @@ begin
 
       // Execute web application
       aResponse:= SpiderApacheObj.Execute;
+
 
       // Send response to the browser
       if Assigned(aResponse) then
@@ -132,8 +139,8 @@ begin
           apr_table_set(r^.headers_out, 'Set-Cookie', PChar(Copy(Strings[j],
             Pos(':', Strings[j]) + 1, Length(Strings[j]))));
 
+         aResponse.Content.Clear;
       end;
-
 
       Break;
     end;
@@ -142,11 +149,12 @@ begin
     on e: exception do
     ap_rputs(PChar('<br/> Error in WebModule : <font color=red>' + e.Message + '</font>'), r);
   end;
-  web.Free;
+
+  if Assigned(Web) then
+   Web.Free;
 
   Result:= Ok;
 end;
-
 
 end.
 

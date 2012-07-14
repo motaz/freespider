@@ -28,7 +28,7 @@
     <Description Value="Web application development for Lazarus, using CGI protocol"/>
     <License Value="LGPL
 "/>
-    <Version Major="1" Minor="2" Release="11" Build="28"/>
+    <Version Major="1" Minor="3" Build="29"/>
     <Files Count="12">
       <Item1>
         <Filename Value="spidercgi.pas"/>
