@@ -6,10 +6,11 @@ unit apacheadapter;
 
   ApaacheApapter:  Decodes Apache Module reqeuest and response, triggers ApacheModule component
   Author:        Motaz Abdel Azeem
+  Forked from:   http://wiki.freepascal.org/FPC_and_Apache_Modules
   email:         motaz@code.sd
   Home page:     http://code.sd
   License:       LGPL
-  Last modified: 12.July.2012
+  Last modified: 15.July.2012
 
 *******************************************************************************************************************
 }
