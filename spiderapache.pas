@@ -74,6 +74,7 @@ begin
   end;
   DataMod:= nil;
 
+
   // Search path in other additional modules
   if (not Found) then
   for i:= 0 to High(fModules) do
@@ -127,8 +128,10 @@ begin
     PathInfo:= Copy(PathInfo, 1, Length(PathInfo) - 1);
   fPathInfo:= Trim(PathInfo);
 
-  if not Assigned(fRequest) then
-    fRequest:= TApacheRequest.Create(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData,
+  if Assigned(fRequest) then
+    fRequest.Free;
+
+  fRequest:= TApacheRequest.Create(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData,
       ContentLength, Referer, RemoteIP, URI, ServerSoftware);
 end;
 

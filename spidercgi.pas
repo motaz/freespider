@@ -7,7 +7,7 @@
   email:        motaz@code.sd
   Home page:    http://code.sd
   License:      LGPL
-  Last modified: 14.July.2012
+  Last modified: 22.July.2012
 
   Jul/2010 - Modified by Luiz Américo
     * Remove LCL dependency
@@ -42,6 +42,7 @@ type
     fPath: string;
     fModules: array of String;
     fPathList: array of TStringList;
+    fEnabled: Boolean;
 
     function SearchActionInModule(const APath: string; AModule: TDataModule): Boolean;
     { Private declarations }
@@ -59,6 +60,7 @@ type
   published
     { Published declarations }
     property OnRequest: TSpiderEvent read FOnRequest  write FOnRequest;
+    property Enabled: Boolean read fEnabled write fEnabled;
     property Path: string read fPath;
   end;
 
@@ -78,9 +80,13 @@ var
 
 begin
   try
-  {$IFDEF apachemodule}
-    Exit;
-  {$ENDIF}
+    if (not fEnabled) or
+      ((GetEnvironmentVariable('REMOTE_ADDR') = '') and   // Make sure it is launched from web server
+        (GetEnvironmentVariable('REQUEST_METHOD') = '') and
+        (LowerCase(ParamStr(1)) <> '-d')) then   // enable run from console using -d option
+    begin
+      Exit;
+    end;
 
     APath:= Trim(LowerCase(GetEnvironmentVariable('PATH_INFO')));
     if (APath <> '') and (APath[Length(APath)] = '/') then
@@ -166,6 +172,7 @@ begin
   fRequest:= TCGIRequest.Create;
   fResponse:= TSpiderResponse.Create;
   fPath:= '/';
+  fEnabled:= True;
 end;
 
 destructor TSpiderCGI.Destroy;

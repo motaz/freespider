@@ -152,7 +152,6 @@ begin
           Add('{$ENDIF}');
           Add('');
           Add('{$define Apache2_0}');
-          Add('{$define apachemodule}');
           Add('');
           Add('uses SysUtils, httpd, apr, apacheadapter, Classes;');
           Add('');
@@ -342,7 +341,6 @@ begin
         begin
         Add('Program SpiderProj1;');
         Add('');
-        Add('{$define apachecgi}');
         Add('');
         Add('Uses');
         Add('{$IFDEF UNIX}{$IFDEF UseCThreads}');

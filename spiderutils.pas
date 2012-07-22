@@ -214,6 +214,7 @@ begin
   fQueryFields.Free;
   fContentFields.Free;
   fCookieList.Free;
+  inherited Destroy;
 end;
 
 function TSpiderRequest.Query(FieldValue: string): string;
@@ -258,6 +259,7 @@ begin
   fContent.Free;
   fCookieList.Free;
   fCustomHeader.Free;
+  inherited Destroy;
 end;
 
 procedure TSpiderResponse.SetCookie(AName, AValue, APath: string; ExpiresInGMT: TDateTime = -1);
