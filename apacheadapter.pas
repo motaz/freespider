@@ -62,7 +62,7 @@ begin
   Found:= False;
   FirstEmpty:= -1;
   try
-    // Remove all web modules in idle time to reduce memory leak
+   // Remove all web modules in idle time to reduce memory leak
     AllFinished:= True;
     if (LastRequest + EncodeTime(0, 3, 0, 0) < Now) and (Length(myWebPool) > 0) then
     begin
@@ -121,7 +121,7 @@ function ProcessHandler(r: Prequest_rec; WebModule: TDataModuleClass; ModuleName
   HandlerName: string; ThreadPool: Boolean = True): Integer;
 var
   RequestedHandler: string;
-  Buf: array [0 .. 20024] of Char;
+  Buf: array [0 .. 10024] of Char;
   NumRead: Integer;
   Line: string;
   Head: Papr_array_header_t;
@@ -133,7 +133,6 @@ var
   ContentType: string;
   j: Integer;
   PostedData: string;
-  Data: Pointer;
   DataLen: Integer;
   WebFound: Boolean;
   FoundIndex: Integer;
@@ -148,7 +147,6 @@ begin
     Result := DECLINED;
     Exit;
   end;
-
   { The following line just prints a message to the errorlog }
   // ap_log_error(PChar(MODULENAME), 54, APLOG_NOERRNO or APLOG_NOTICE,
   //  {$ifndef Apache1_3}0,{$endif} r^.server,
@@ -172,6 +170,7 @@ begin
     Line:= '';
     PostedData:= '';
     // read posted data
+
     if (r^.method = 'POST') then
     begin
       ap_setup_client_block(r, REQUEST_CHUNKED_DECHUNK);
@@ -211,7 +210,6 @@ begin
       // Execute web application
       aResponse:= SpiderApacheObj.Execute;
 
-
       // Send response to the browser
       if Assigned(aResponse) then
       begin
@@ -226,11 +224,11 @@ begin
 
         // Response contents
         DataLen:= Length(aResponse.Content.Text);
-        Data:= GetMem(DataLen);
+        {Data:= GetMem(DataLen);
         Move(Pointer(aResponse.Content.Text)^, Data^, DataLen);
         ap_rwrite(Data, DataLen, r);
-      //  FreeMem(Data);
-
+        FreeMem(Data);}
+        ap_rwrite(Pointer(aResponse.Content.Text), DataLen, r);
 
         // Set cookies:
         with aResponse.CookieList do
@@ -242,16 +240,20 @@ begin
         aResponse.CustomHeader.Clear;
         aResponse.Content.Clear;
 
-        apr_table_clear(r^.headers_in);
-
       end;
 
       Break;
     end;
 
   except
-    on e: exception do
+  on e: exception do
+  begin
     ap_rputs(PChar('<br/> Error in WebModule : <font color=red>' + e.Message + '</font>'), r);
+    ap_log_error(PChar(MODULENAME), 54, APLOG_NOERRNO or APLOG_NOTICE,1,
+        r^.server, PChar(ModuleName + ': %s'), [PChar(e.Message)]);
+
+  end;
+
   end;
 
   if Assigned(aWeb) then

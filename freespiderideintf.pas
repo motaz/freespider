@@ -205,7 +205,8 @@ begin
           Add('');
           Add('function DefaultHandler(r: Prequest_rec): Integer; cdecl;');
           Add('begin');
-          Add('   Result:= ProcessHandler(r, TDataModule1, MODULE_NAME, HANDLER_NAME);');
+          Add('// Thread pooling is turned to False by default, you can turn it to True');
+          Add('   Result:= ProcessHandler(r, TDataModule1, MODULE_NAME, HANDLER_NAME, False);');
           Add('end;');
           Add('');
           Add('');
