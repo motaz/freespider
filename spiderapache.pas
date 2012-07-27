@@ -74,7 +74,6 @@ begin
   end;
   DataMod:= nil;
 
-
   // Search path in other additional modules
   if (not Found) then
   for i:= 0 to High(fModules) do
@@ -130,6 +129,9 @@ begin
 
   if Assigned(fRequest) then
     fRequest.Free;
+
+  if Assigned(fResponse) then
+    fResponse.Content.Clear;
 
   fRequest:= TApacheRequest.Create(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData,
       ContentLength, Referer, RemoteIP, URI, ServerSoftware);

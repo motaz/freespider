@@ -7,7 +7,7 @@
   email:        motaz@code.sd
   Home page:    http://code.sd
   License:      LGPL
-  Last modified: 22.July.2012
+  Last modified: 27.July.2012
 
   Jul/2010 - Modified by Luiz Américo
     * Remove LCL dependency
@@ -83,7 +83,7 @@ begin
     if (not fEnabled) or
       ((GetEnvironmentVariable('REMOTE_ADDR') = '') and   // Make sure it is launched from web server
         (GetEnvironmentVariable('REQUEST_METHOD') = '') and
-        (LowerCase(ParamStr(1)) <> '-d')) then   // enable run from console using -d option
+        (LowerCase(ParamStr(1)) <> '-con')) then   // enable run from console using -d option
     begin
       Exit;
     end;

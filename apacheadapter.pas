@@ -10,7 +10,7 @@ unit ApacheAdapter;
   email:         motaz@code.sd
   Home page:     http://code.sd
   License:       LGPL
-  Last modified: 22.July.2012
+  Last modified: 27.July.2012
 
 *******************************************************************************************************************
 }
@@ -36,6 +36,7 @@ type
   TMyWeb = class
     public
       IsFinished: Boolean;
+      HasError: Boolean;
       Web: TDataModule;
       constructor Create;
       destructor Destroy; override;
@@ -44,6 +45,7 @@ type
 var
   myWebPool: array of TMyWeb;
   MyCS: TCriticalSection;
+  SecCS: TCriticalSection;
   LastRequest: TDateTime;
 
 
@@ -58,16 +60,17 @@ var
   AllFinished: Boolean;
 
 begin
+  Result:= nil;
   MyCS.Enter; // Enter critical section
   Found:= False;
   FirstEmpty:= -1;
   try
    // Remove all web modules in idle time to reduce memory leak
     AllFinished:= True;
-    if (LastRequest + EncodeTime(0, 3, 0, 0) < Now) and (Length(myWebPool) > 0) then
+    if (LastRequest + EncodeTime(0, 1, 0, 0) < Now) and (Length(myWebPool) > 0) then
     begin
       for i:= 0 to High(myWebPool) do
-      if (Assigned(myWebPool[i])) and (myWebPool[i].IsFinished) then
+      if (Assigned(myWebPool[i])) and (myWebPool[i].IsFinished) or (myWebPool[i].HasError) then
       begin
         myWebPool[i].Web.Free;
         myWebPool[i].Free;
@@ -83,14 +86,23 @@ begin
     LastRequest:= Now;
 
 
-    // Search for reusable Web module
-
+    // Search for new/reusable Web module
     for i:= 0 to High(myWebPool) do
     begin
+      // Remove buggy modules
+      if Assigned(myWebPool[i]) and (myWebPool[i].HasError) then
+      begin
+        myWebPool[i].Web.Free;
+        myWebPool[i].Free;
+        myWebPool[i]:= nil;
+      end;
+
+      // Get first empty slot index
       if (FirstEmpty = -1) and not Assigned(myWebPool[i]) then
         FirstEmpty:= i;
 
-      if Assigned(myWebPool[i]) and (myWebPool[i].IsFinished) then
+      // Get usable web module
+      if Assigned(myWebPool[i]) and (myWebPool[i].IsFinished) and (not myWebPool[i].HasError) then
       begin
         Result:= myWebPool[i];
         Found:= True;
@@ -121,7 +133,7 @@ function ProcessHandler(r: Prequest_rec; WebModule: TDataModuleClass; ModuleName
   HandlerName: string; ThreadPool: Boolean = True): Integer;
 var
   RequestedHandler: string;
-  Buf: array [0 .. 10024] of Char;
+  Buf: array [0 .. 20024] of Char;
   NumRead: Integer;
   Line: string;
   Head: Papr_array_header_t;
@@ -141,18 +153,13 @@ begin
   RequestedHandler := r^.handler;
 
   aWeb:= nil;
+  aResponse:= nil;
   { We decline to handle a request if configured handler is not the value of r^.handler }
   if not SameText(RequestedHandler, HANDLERNAME) then
   begin
     Result := DECLINED;
     Exit;
   end;
-  { The following line just prints a message to the errorlog }
-  // ap_log_error(PChar(MODULENAME), 54, APLOG_NOERRNO or APLOG_NOTICE,
-  //  {$ifndef Apache1_3}0,{$endif} r^.server,
-  //  'mod_hello: %s', [PChar('Before content is output')]);
-
-  { We set the content type before doing anything else }
 
   ap_set_content_type(r, 'text/html');
 
@@ -168,9 +175,9 @@ begin
 
   try
     Line:= '';
-    PostedData:= '';
-    // read posted data
 
+    // read posted data
+    PostedData:= '';
     if (r^.method = 'POST') then
     begin
       ap_setup_client_block(r, REQUEST_CHUNKED_DECHUNK);
@@ -182,8 +189,14 @@ begin
       until NumRead = 0;
     end;
 
+
     if ThreadPool then
-      aWeb:= GetDataModuleFromPool(WebModule)
+    begin
+      repeat
+        aWeb:= GetDataModuleFromPool(WebModule);
+        Sleep(2);
+      until aWeb <> nil;
+    end
     else
     begin
       aWeb:= TMyWeb.Create;
@@ -206,7 +219,6 @@ begin
       apr_table_get(r^.headers_in, 'User-Agent'), Posteddata, apr_table_get(r^.headers_in, 'Content-Length'),
         apr_table_get(r^.headers_in, 'REFERER'), r^.connection^.remote_ip, r^.uri, ap_get_server_version);
 
-
       // Execute web application
       aResponse:= SpiderApacheObj.Execute;
 
@@ -224,10 +236,7 @@ begin
 
         // Response contents
         DataLen:= Length(aResponse.Content.Text);
-        {Data:= GetMem(DataLen);
-        Move(Pointer(aResponse.Content.Text)^, Data^, DataLen);
-        ap_rwrite(Data, DataLen, r);
-        FreeMem(Data);}
+
         ap_rwrite(Pointer(aResponse.Content.Text), DataLen, r);
 
         // Set cookies:
@@ -248,9 +257,28 @@ begin
   except
   on e: exception do
   begin
+    // Remove from pool
+    if ThreadPool and Assigned(aWeb) then
+    begin
+      if Assigned(aResponse) then
+      begin
+        aResponse.CookieList.Clear;
+        aResponse.CustomHeader.Clear;
+        aResponse.Content.Clear;
+      end;
+
+      SecCS.Enter;
+      try
+        aWeb.HasError:= True;
+      finally
+        SecCS.Leave;
+      end;
+    end;
+
     ap_rputs(PChar('<br/> Error in WebModule : <font color=red>' + e.Message + '</font>'), r);
     ap_log_error(PChar(MODULENAME), 54, APLOG_NOERRNO or APLOG_NOTICE,1,
         r^.server, PChar(ModuleName + ': %s'), [PChar(e.Message)]);
+    Result:= 1;
 
   end;
 
@@ -258,7 +286,15 @@ begin
 
   if Assigned(aWeb) then
   if ThreadPool then
-    aWeb.IsFinished:= True
+  begin
+    SecCS.Enter;
+    try
+      aWeb.IsFinished:= True
+
+    finally
+      SecCS.Leave;
+    end;
+  end
   else
   begin
     aWeb.Web.Free;
@@ -274,7 +310,9 @@ constructor TMyWeb.Create;
 begin
   inherited Create;
   IsFinished:= False;
+  HasError:= False;
   Web:= nil;
+
 end;
 
 destructor TMyWeb.Destroy;
@@ -285,5 +323,6 @@ end;
 initialization
 
   MyCS:= TCriticalSection.Create;
+  SecCS:= TCriticalSection.Create;
 end.
 
