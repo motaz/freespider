@@ -6,7 +6,7 @@
   email:        motaz@code.sd
   Home page:    http://code.sd
   License:      LGPL
-  Last modifie: 6.July.2010
+  Last modifie: 31.July.2012
 
   Jul/2010 - Modified by Luiz Américo
     * Remove LCL dependency
@@ -136,12 +136,13 @@ begin
     itTextArea: fConentList.Add(TD + '<textarea' + NameAttr + ' ' + ExtraParam + '>' + InputValue +
       '</textarea>' + STD + STR);
 
-    itFile: fConentList.Add(TD + '<input type="file"' + NameAttr + ' ' + ExtraParam + '/>' + STD + STR);
+    itFile: fConentList.Add(TD + '<input type="file"' + NameAttr + ' value="' + InputValue + '" '   + ExtraParam + '/>'
+      + STD + STR);
 
-    itHidden: fConentList.Add('<input type="hidden"' + NameAttr + ' ' + ExtraParam + '/>');
-	// new
-    itCheckbox: fConentList.Add(TD + '<input type="checkbox" name="' + InputName + '" '+ InputValue + ' '+ ExtraParam + '/> ' + STD + STR);
-	//
+    itHidden: fConentList.Add('<input type="hidden"' + NameAttr + '  value="' + InputValue + '" '  + ExtraParam + '/>');
+
+    itCheckbox: fConentList.Add(TD + '<input type="checkbox" name="' + InputName + '" value="'+ InputValue + '" ' +
+      ExtraParam + '/> ' + STD + STR);
 
   end;
   if (not fPutInTable) and NewLine then

@@ -6,7 +6,7 @@
   email:        motaz@code.sd
   Home page:    http://code.sd
   License:      LGPL
-  Last modifie: 3.Oct.2009
+  Last modifie: 31.7.2012
 
   Jul/2010 - Modified by Luiz Américo
     * Remove LCL dependency
@@ -48,7 +48,7 @@ type
   published
     property PageFileName: string read fPageFileName write fPageFileName;
     property TagStart: string read fTagStart write fTagStart;
-    property TagStopt: string read fTagStop write SetTagStop;
+    property TagStop: string read fTagStop write SetTagStop;
 
     property OnTag: TTagEvent read fOnTag write fOnTag;
 
