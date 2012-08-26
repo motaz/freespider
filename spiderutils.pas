@@ -6,7 +6,7 @@
   email:        motaz@code.sd
   Home page:    http://code.sd
   License:      LGPL
-  Last modifie: 12.July.2012
+  Last modifie: 26.Aug.2012
 
   Jul/2010 - Modified by Luiz Américo
     * Remove LCL dependency
@@ -80,8 +80,8 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    function Query(FieldValue: string): string;
-    function Form(FieldValue: string): string;
+    function Query(FieldName: string): string;
+    function Form(FieldName: string): string;
     function GetCookie(AName: string): string;
 
     property Queryfields: TStringList read fQueryFields;
@@ -127,6 +127,22 @@ type
 
     constructor Create;
     destructor Destroy; override;
+
+    procedure NewLine;
+    procedure HR;
+    procedure NewTable(Attr: string = '');
+    procedure CloseTable;
+    procedure NewTableRow(Attr: string = '');
+    procedure CloseTableRow;
+    procedure NewTableData(Attr: string = '');
+    procedure CloseTableData;
+    procedure PutTableData(aData: string; Attr: string = '');
+
+    procedure AddBold(aText: string);
+    procedure AddItalic(aText: string);
+    procedure AddListItem(aText: string);
+    procedure AddFont(aText, Attr: string);
+    procedure AddParagraph(aText: string; Attr: string = '');
   end;
 
   TSpiderEvent  = procedure(Sender: TObject; Request: TSpiderRequest;
@@ -217,14 +233,14 @@ begin
   inherited Destroy;
 end;
 
-function TSpiderRequest.Query(FieldValue: string): string;
+function TSpiderRequest.Query(FieldName: string): string;
 begin
-  Result:= fQueryFields.Values[FieldValue];
+  Result:= fQueryFields.Values[FieldName];
 end;
 
-function TSpiderRequest.Form(FieldValue: string): string;
+function TSpiderRequest.Form(FieldName: string): string;
 begin
-  Result:= fContentFields.Values[FieldValue];
+  Result:= fContentFields.Values[FieldName];
 end;
 
 function TSpiderRequest.GetCookie(AName: string): string;
@@ -260,6 +276,76 @@ begin
   fCookieList.Free;
   fCustomHeader.Free;
   inherited Destroy;
+end;
+
+procedure TSpiderResponse.NewLine;
+begin
+  fContent.Add('<br />');
+end;
+
+procedure TSpiderResponse.HR;
+begin
+  fContent.Add('<HR>');
+end;
+
+procedure TSpiderResponse.NewTable(Attr: string);
+begin
+  fContent.Add('<table ' + Attr + '>');
+end;
+
+procedure TSpiderResponse.CloseTable;
+begin
+  fContent.Add('</table>');
+end;
+
+procedure TSpiderResponse.NewTableRow(Attr: string);
+begin
+  fContent.Add('<tr ' + Attr + '>');
+end;
+
+procedure TSpiderResponse.CloseTableRow;
+begin
+  fContent.Add('</tr>');
+end;
+
+procedure TSpiderResponse.NewTableData(Attr: string);
+begin
+  fContent.Add('<td ' + Attr + '>');
+end;
+
+procedure TSpiderResponse.CloseTableData;
+begin
+  fContent.Add('</td>');
+end;
+
+procedure TSpiderResponse.PutTableData(aData: string; Attr: string);
+begin
+  fContent.Add('<td ' + Attr + '>' + aData + '</td>');
+end;
+
+procedure TSpiderResponse.AddBold(aText: string);
+begin
+  fContent.Add('<b>' + aText + '</b>');
+end;
+
+procedure TSpiderResponse.AddItalic(aText: string);
+begin
+  fContent.Add('<i>' + aText + '</i>');
+end;
+
+procedure TSpiderResponse.AddListItem(aText: string);
+begin
+  fContent.Add('<li>' + aText + '</li>');
+end;
+
+procedure TSpiderResponse.AddFont(aText, Attr: string);
+begin
+  fContent.Add('<font ' + Attr + '>' + aText + '</font>');
+end;
+
+procedure TSpiderResponse.AddParagraph(aText: string; Attr: string);
+begin
+  fContent.Add('<P ' + Attr + '>' + aText + '</P>');
 end;
 
 procedure TSpiderResponse.SetCookie(AName, AValue, APath: string; ExpiresInGMT: TDateTime = -1);

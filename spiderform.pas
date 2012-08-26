@@ -6,7 +6,7 @@
   email:        motaz@code.sd
   Home page:    http://code.sd
   License:      LGPL
-  Last modifie: 31.July.2012
+  Last modifie: 26.Aug.2012
 
   Jul/2010 - Modified by Luiz Américo
     * Remove LCL dependency
@@ -39,6 +39,7 @@ type
     fAction: string;
     fExtraParam: string;
     fPutInTable: Boolean;
+    fRowOpened: Boolean;
 
     fConentList: TStringList;
     { Private declarations }
@@ -47,12 +48,16 @@ type
   public
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
-    procedure AddText(AText: string; LabelCSS: string = '');
+    procedure AddText(AText: string; LabelCSS: string = ''; CloseRow: Boolean = False);
+    procedure AddInputExt(InputType: TInputType; const InputName: string; const InputValue: string = ''; const ExtraParam: string = '';
+      NewLine: Boolean = True; CloseRow: Boolean = True; TextBefor: String = ''; TextAfter: string = '');
+    procedure AddHTML(AHTMLText: string);
     procedure AddInput(InputType: TInputType; const InputName: string; const InputValue: string = ''; const ExtraParam: string = '';
       NewLine: Boolean = True);
-    procedure AddHTML(AHTMLText: string);
     function Contents: string;
     procedure Clear;
+    procedure NewRow;
+    procedure CloseRow;
     { Public declarations }
   published
     property Method: string read fMethod write fMethod;
@@ -74,6 +79,7 @@ begin
   fConentList:= TStringList.Create;
   Method:= 'POST';
   fPutInTable:= True;
+  fRowOpened:= False;
 end;
 
 destructor TSpiderForm.Destroy;
@@ -82,16 +88,28 @@ begin
   inherited Destroy;
 end;
 
-procedure TSpiderForm.AddText(AText: string; LabelCSS: string = '');
+procedure TSpiderForm.AddText(AText: string; LabelCSS: string; CloseRow: Boolean = False
+  );
 var
-  TR, TD, STD: string;
+  TR, TD, STD, STR: string;
   LB, LBT: string;
 begin
   if fPutInTable then
   begin
-    TR:= '<TR>';
+    if not fRowOpened then
+    begin
+      TR:= '<TR>';
+      fRowOpened:= True;
+    end;
     TD:= '<TD>';
     STD:= '</TD>';
+    if CloseRow then
+    begin
+      STR:= '</TR>';
+      fRowOpened:= False;
+    end
+    else
+      STR:= '';
   end;
   LB:= '';
   LBT:= '';
@@ -100,19 +118,33 @@ begin
     LB:= '<LABEL ' + LabelCSS + '>';
     LBT:= '</LABEL>';
   end;
-  fConentList.Add(TR + TD + LB + AText + LBT + STD);
+  fConentList.Add(TR + TD + LB + AText + LBT + STD + STR);
 end;
 
-procedure TSpiderForm.AddInput(InputType: TInputType; const InputName: string; const InputValue: string;
-  const ExtraParam: string;  NewLine: Boolean);
+procedure TSpiderForm.AddInputExt(InputType: TInputType; const InputName: string;
+  const InputValue: string; const ExtraParam: string; NewLine: Boolean;
+  CloseRow: Boolean = True; TextBefor: String = ''; TextAfter: string = '');
 var
-  STR, TD, STD, NameAttr: string;
+  TR, STR, TD, STD, NameAttr: string;
 begin
   if fPutInTable then
   begin
+    if not fRowOpened then
+    begin
+      TR:= '<TR>';
+      fRowOpened:= True;
+    end
+    else
+     TR:= '';
     TD:= '<TD>';
-    STR:= '</TR>';
     STD:= '</TD>';
+    if CloseRow then
+    begin
+      STR:= '</TR>';
+      fRowOpened:= False;
+    end
+    else
+      STR:= '';
   end;
 
   if InputName <> '' then
@@ -120,31 +152,30 @@ begin
   else
     NameAttr := '';
 
+  fConentList.Add(TR + TD + TextBefor);
+
   case InputType of
-    itText: fConentList.Add(TD + '<input type="text"'+ NameAttr + ' value="' + InputValue + '" ' +
-      ExtraParam + '/>' + STD + STR);
+    itText: fConentList.Add('<input type="text"'+ NameAttr + ' value="' + InputValue + '" ' + ExtraParam + '/>' );
 
-    itPassword: fConentList.Add(TD + '<input type="password"' + NameAttr + ' value="' + InputValue + '" ' +
-      ExtraParam + '/>' + STD + STR);
+    itPassword: fConentList.Add('<input type="password"' + NameAttr + ' value="' + InputValue + '" ' + ExtraParam + '/>' );
 
-    itButton: fConentList.Add(TD + '<input type="button"' + NameAttr + ' value="' + InputValue + '" ' +
-      ExtraParam + '/>' + STD + STR);
+    itButton: fConentList.Add('<input type="button"' + NameAttr + ' value="' + InputValue + '" ' + ExtraParam + '/>');
 
-    itSubmit: fConentList.Add(TD+ '<input type="submit"' + NameAttr + ' value="' + InputValue + '" ' +
-      ExtraParam + '/>' + STD + STR);
+    itSubmit: fConentList.Add('<input type="submit"' + NameAttr + ' value="' + InputValue + '" ' + ExtraParam + '/>');
 
-    itTextArea: fConentList.Add(TD + '<textarea' + NameAttr + ' ' + ExtraParam + '>' + InputValue +
-      '</textarea>' + STD + STR);
+    itTextArea: fConentList.Add('<textarea' + NameAttr + ' ' + ExtraParam + '>' + InputValue + '</textarea>');
 
-    itFile: fConentList.Add(TD + '<input type="file"' + NameAttr + ' value="' + InputValue + '" '   + ExtraParam + '/>'
-      + STD + STR);
+    itFile: fConentList.Add('<input type="file"' + NameAttr + ' value="' + InputValue + '" '   + ExtraParam + '/>');
 
     itHidden: fConentList.Add('<input type="hidden"' + NameAttr + '  value="' + InputValue + '" '  + ExtraParam + '/>');
 
-    itCheckbox: fConentList.Add(TD + '<input type="checkbox" name="' + InputName + '" value="'+ InputValue + '" ' +
-      ExtraParam + '/> ' + STD + STR);
+    itCheckbox: fConentList.Add('<input type="checkbox" name="' + InputName + '" value="'+ InputValue + '" ' +
+      ExtraParam + '/> ');
 
   end;
+
+  fConentList.Add(TextAfter + STD + STR);
+
   if (not fPutInTable) and NewLine then
     fConentList.Add('<br />');
 end;
@@ -152,6 +183,12 @@ end;
 procedure TSpiderForm.AddHTML(AHTMLText: string);
 begin
   fConentList.Add(AHTMLText);
+end;
+
+procedure TSpiderForm.AddInput(InputType: TInputType; const InputName: string;
+  const InputValue: string; const ExtraParam: string; NewLine: Boolean);
+begin
+  AddInputExt(InputType, InputName, InputValue, ExtraParam, NewLine);
 end;
 
 function TSpiderForm.Contents: string;
@@ -168,6 +205,25 @@ end;
 procedure TSpiderForm.Clear;
 begin
   fConentList.Clear;
+  fRowOpened:= False;
+end;
+
+procedure TSpiderForm.NewRow;
+begin
+  if fPutInTable then
+  begin
+    fConentList.Add('<tr>');
+    fRowOpened:= True;
+  end;
+end;
+
+procedure TSpiderForm.CloseRow;
+begin
+  if fPutInTable then
+  begin
+    fConentList.Add('</tr>');
+    fRowOpened:= False;
+  end;
 end;
 
 end.
