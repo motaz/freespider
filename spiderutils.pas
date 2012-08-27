@@ -128,6 +128,7 @@ type
     constructor Create;
     destructor Destroy; override;
 
+    // HTML Tags
     procedure NewLine;
     procedure HR;
     procedure NewTable(Attr: string = '');
@@ -143,6 +144,10 @@ type
     procedure AddListItem(aText: string);
     procedure AddFont(aText, Attr: string);
     procedure AddParagraph(aText: string; Attr: string = '');
+    procedure AddHyperLink(URL, aText: string);
+
+    procedure NewForm(Method, Action: string; ExtraParams: string = '');
+    procedure CloseForm;
   end;
 
   TSpiderEvent  = procedure(Sender: TObject; Request: TSpiderRequest;
@@ -254,7 +259,10 @@ begin
     Result:= fURI
   else
   begin
-    Result:= Copy(fURI, 1, Length(fURI) - Length(fPathInfo));
+    Result:= fURI;
+    if pos('?', Result) > 0 then
+      Result:= Copy(Result, 1, Pos('?', Result) - 1);
+    Result:= Copy(Result, 1, Length(Result) - Length(fPathInfo));
     if (Result <> '') and (Result[Length(Result)]  = '/') then
       Delete(Result, Length(Result), 1);
   end;
@@ -346,6 +354,21 @@ end;
 procedure TSpiderResponse.AddParagraph(aText: string; Attr: string);
 begin
   fContent.Add('<P ' + Attr + '>' + aText + '</P>');
+end;
+
+procedure TSpiderResponse.AddHyperLink(URL, aText: string);
+begin
+  fContent.Add('<a href="' + URL + '">' + aText + '</a>');
+end;
+
+procedure TSpiderResponse.NewForm(Method, Action: string; ExtraParams: string);
+begin
+  fContent.Add('<form method="' + Method + '" action="' + Action + '" ' + ExtraParams + '>');
+end;
+
+procedure TSpiderResponse.CloseForm;
+begin
+  fContent.Add('</form>');
 end;
 
 procedure TSpiderResponse.SetCookie(AName, AValue, APath: string; ExpiresInGMT: TDateTime = -1);

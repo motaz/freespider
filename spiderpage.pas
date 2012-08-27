@@ -49,7 +49,6 @@ type
     property PageFileName: string read fPageFileName write fPageFileName;
     property TagStart: string read fTagStart write fTagStart;
     property TagStop: string read fTagStop write SetTagStop;
-    property TagStopt: string read fTagStop write SetTagStop;
 
     property OnTag: TTagEvent read fOnTag write fOnTag;
 

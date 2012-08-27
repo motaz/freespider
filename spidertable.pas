@@ -208,7 +208,7 @@ begin
       if fDataSet.Fields[x].Visible then
       begin
         Result:= Result + '<th ';
-        CellData:= fDataSet.Fields[x].DisplayName;
+        CellData:= fDataSet.Fields[x].DisplayLabel;
         BgColor:= '';
         ExtraParams:= '';
 
