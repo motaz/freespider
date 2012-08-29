@@ -6,7 +6,7 @@
   email:        motaz@code.sd
   Home page:    http://code.sd
   License:      LGPL
-  Last modifie: 26.Aug.2012
+  Last modifie: 28.Aug.2012
 
   Jul/2010 - Modified by Luiz Américo
     * Remove LCL dependency
@@ -83,6 +83,8 @@ type
     function Query(FieldName: string): string;
     function Form(FieldName: string): string;
     function GetCookie(AName: string): string;
+    function ContentNames(Index: Integer): string;
+    function ContentValues(Index: Integer): string;
 
     property Queryfields: TStringList read fQueryFields;
     property ContentFields: TStringList read fContentFields;
@@ -97,6 +99,7 @@ type
     property URI: string read fURI;
     property RootURI: string read GetRootURI;
     property WebServerSoftware: string read fWebServerSoftware;
+
 
     property IsCGI: Boolean read fIsCGI;
     property IsApache: Boolean read fIsApache;
@@ -129,7 +132,7 @@ type
     destructor Destroy; override;
 
     // HTML Tags
-    procedure NewLine;
+    procedure NewLine(NumOfNewLines: Integer = 1);
     procedure HR;
     procedure NewTable(Attr: string = '');
     procedure CloseTable;
@@ -253,6 +256,16 @@ begin
   Result:= fCookieList.Values[AName];
 end;
 
+function TSpiderRequest.ContentNames(Index: Integer): string;
+begin
+  Result:= fContentFields.Names[Index];
+end;
+
+function TSpiderRequest.ContentValues(Index: Integer): string;
+begin
+  Result:= fContentFields.ValueFromIndex[Index];
+end;
+
 function TSpiderRequest.GetRootURI: string;
 begin
   if fPathInfo = '/' then
@@ -286,9 +299,12 @@ begin
   inherited Destroy;
 end;
 
-procedure TSpiderResponse.NewLine;
+procedure TSpiderResponse.NewLine(NumOfNewLines: Integer = 1);
+var
+  i: Integer;
 begin
-  fContent.Add('<br />');
+  for i:= 1 to NumOfNewLines do
+    fContent.Add('<br />');
 end;
 
 procedure TSpiderResponse.HR;
