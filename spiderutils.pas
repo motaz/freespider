@@ -67,6 +67,7 @@ type
     fIsCGI: Boolean;
     fIsApache: Boolean;
     fURI: string;
+    fHost: string;
     fWebServerSoftware: string;
 
     procedure ReadCookies; virtual; abstract;
@@ -76,6 +77,7 @@ type
     procedure ReadVariables; virtual; abstract;
     procedure DecodeRequest(AText: string; var List: TStringList);
     function GetRootURI: string;
+    function GetHost: string;
 
   public
     constructor Create;
@@ -99,6 +101,7 @@ type
     property URI: string read fURI;
     property RootURI: string read GetRootURI;
     property WebServerSoftware: string read fWebServerSoftware;
+    property Host: string read GetHost;
 
 
     property IsCGI: Boolean read fIsCGI;
@@ -279,6 +282,11 @@ begin
     if (Result <> '') and (Result[Length(Result)]  = '/') then
       Delete(Result, Length(Result), 1);
   end;
+end;
+
+function TSpiderRequest.GetHost: string;
+begin
+  Result:= fHost;
 end;
 
 { TSpiderResponse }

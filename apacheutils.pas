@@ -37,7 +37,7 @@ type
     procedure DisplayErrorMessage(Msg: string); override;
   public
     constructor Create(aPathInfo, aContentType, aRequestMethod, aQuery, aCookies, aUserAgent, PostedData,
-      ContentLength, aReferer, aRemoteIP, aURI, aServerSoftware: string);
+      ContentLength, aReferer, aRemoteIP, aURI, aServerSoftware, aHost: string);
   end;
 
 
@@ -216,8 +216,9 @@ begin
   raise Exception.Create(Msg);
 end;
 
-constructor TApacheRequest.Create(aPathInfo, aContentType, aRequestMethod, aQuery, aCookies, aUserAgent, PostedData,
-  ContentLength, aReferer, aRemoteIP, aURI, aServerSoftware: string);
+constructor TApacheRequest.Create(aPathInfo, aContentType, aRequestMethod,
+  aQuery, aCookies, aUserAgent, PostedData, ContentLength, aReferer, aRemoteIP,
+  aURI, aServerSoftware, aHost: string);
 begin
   fPathInfo:= aPathInfo;
   fContentType:= aContentType;
@@ -230,6 +231,7 @@ begin
   fReferer:= aReferer;
   fRemoteAddress:= aRemoteIP;
   fURI:= aURI;
+  fHost:= aHost;
   fWebServerSoftware:= aServerSoftware;
   fIsCGI:= False;
   fIsApache:= True;

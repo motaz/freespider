@@ -187,6 +187,7 @@ begin
   fContentType:= GetEnvironmentVariable('CONTENT_TYPE');
   fQueryString:= GetEnvironmentVariable('QUERY_STRING');
   fURI:= LowerCase(GetEnvironmentVariable('REQUEST_URI'));
+  fHost:= LowerCase(GetEnvironmentVariable('HTTP_HOST'));
   fWebServerSoftware:= LowerCase(GetEnvironmentVariable('SERVER_SOFTWARE'));
 
   fPathInfo:= Trim(GetEnvironmentVariable('PATH_INFO'));

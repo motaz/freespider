@@ -42,7 +42,7 @@ type
   public
     constructor Create(TheOwner: TComponent); override;
     procedure Init(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData,
-      ContentLength, Referer, RemoteIP, URI, ServerSoftware: string);
+      ContentLength, Referer, RemoteIP, URI, ServerSoftware, Host: string);
     destructor Destroy; override;
     function Execute: TSpiderResponse;
     procedure AddDataModule(const ADataModuleClassName: string; APaths: array of string);
@@ -120,8 +120,9 @@ begin
   inherited Create(TheOwner);
 end;
 
-procedure TSpiderApache.Init(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData,
-  ContentLength, Referer, RemoteIP, URI, ServerSoftware: string);
+procedure TSpiderApache.Init(PathInfo, ContentType, RequestMethod, Query,
+  Cookies, UserAgent, PostedData, ContentLength, Referer, RemoteIP, URI,
+  ServerSoftware, Host: string);
 begin
   if (PathInfo <> '') and (PathInfo[Length(PathInfo)] = '/') then
     PathInfo:= Copy(PathInfo, 1, Length(PathInfo) - 1);
@@ -134,7 +135,7 @@ begin
     fResponse.Content.Clear;
 
   fRequest:= TApacheRequest.Create(PathInfo, ContentType, RequestMethod, Query, Cookies, UserAgent, PostedData,
-      ContentLength, Referer, RemoteIP, URI, ServerSoftware);
+      ContentLength, Referer, RemoteIP, URI, ServerSoftware, Host);
 end;
 
 destructor TSpiderApache.Destroy;
