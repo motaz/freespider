@@ -6,7 +6,7 @@
   email:        motaz@code.sd
   Home page:    http://code.sd
   License:      LGPL
-  Last modifie: 26.Aug.2012
+  Last modifie: 23.Dec.2012
 
   Jul/2010 - Modified by Luiz Américo
     * Remove LCL dependency
@@ -155,22 +155,22 @@ begin
   fConentList.Add(TR + TD + TextBefor);
 
   case InputType of
-    itText: fConentList.Add('<input type="text"'+ NameAttr + ' value="' + InputValue + '" ' + ExtraParam + '/>' );
+    itText: fConentList.Add('<input type="text"'+ NameAttr + ' value="' + InputValue + '" ' + ExtraParam + ' />' );
 
-    itPassword: fConentList.Add('<input type="password"' + NameAttr + ' value="' + InputValue + '" ' + ExtraParam + '/>' );
+    itPassword: fConentList.Add('<input type="password"' + NameAttr + ' value="' + InputValue + '" ' + ExtraParam + ' />' );
 
     itButton: fConentList.Add('<input type="button"' + NameAttr + ' value="' + InputValue + '" ' + ExtraParam + '/>');
 
-    itSubmit: fConentList.Add('<input type="submit"' + NameAttr + ' value="' + InputValue + '" ' + ExtraParam + '/>');
+    itSubmit: fConentList.Add('<input type="submit"' + NameAttr + ' value="' + InputValue + '" ' + ExtraParam + ' />');
 
     itTextArea: fConentList.Add('<textarea' + NameAttr + ' ' + ExtraParam + '>' + InputValue + '</textarea>');
 
-    itFile: fConentList.Add('<input type="file"' + NameAttr + ' value="' + InputValue + '" '   + ExtraParam + '/>');
+    itFile: fConentList.Add('<input type="file"' + NameAttr + ' value="' + InputValue + '" '   + ExtraParam + ' />');
 
-    itHidden: fConentList.Add('<input type="hidden"' + NameAttr + '  value="' + InputValue + '" '  + ExtraParam + '/>');
+    itHidden: fConentList.Add('<input type="hidden"' + NameAttr + '  value="' + InputValue + '" '  + ExtraParam + ' />');
 
     itCheckbox: fConentList.Add('<input type="checkbox" name="' + InputName + '" value="'+ InputValue + '" ' +
-      ExtraParam + '/> ');
+      ExtraParam + ' /> ');
 
   end;
 
@@ -198,7 +198,7 @@ begin
     fConentList.Insert(0, '<table>');
     fConentList.Add('</table>');
   end;
-  Result:= '<form method="' + fMethod + '" action="' + fAction + '" ' + fExtraParam + '>' + #10 +
+  Result:= '<form method="' + fMethod + '" action="' + fAction + '" ' + fExtraParam + ' >' + #10 +
     fConentList.Text + '</form>';
 end;
 

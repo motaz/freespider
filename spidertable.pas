@@ -7,7 +7,7 @@
   email:        motaz@code.sd
   Home page:    http://code.sd
   License:      LGPL
-  Last modifie: 12.June.2012
+  Last modifie: 23.Dec.2012
 
   Jul/2010 - Modified by Luiz Américo
     * Remove LCL dependency
@@ -30,6 +30,9 @@ type
   THeaderEvent  = procedure(Sender: TObject; DataSet: TDataSet; ColCount: Integer;
     var CellData, BgColor, ExtraParams: string) of object;
 
+  TRowEvent  = procedure(Sender: TObject; DataSet: TDataSet; RowCount: Integer;
+    var BgColor, ExtraParams: string) of object;
+
   TCellEvent  = procedure(Sender: TObject; DataSet: TDataSet; ColCount, RowCount: Integer;
     var CellData, BgColor, ExtraParams: string) of object;
 
@@ -51,6 +54,7 @@ type
 
     fOnDrawHeader : THeaderEvent;
     fOnDrawCell: TCellEvent;
+    fOnDrawRow: TRowEvent;
 
     { Private declarations }
   protected
@@ -83,6 +87,7 @@ type
     property RowColor: string read fDefaultRowColor write fDefaultRowColor;
 
     property OnDrawHeader: THeaderEvent read fOnDrawHeader write fOnDrawHeader;
+    property OnDrawRow: TRowEvent read FOnDrawRow write FOnDrawRow;
     property OnDrawDataCell: TCellEvent read fOnDrawCell write fOnDrawCell;
 
 
@@ -189,6 +194,7 @@ var
   BgColor: string;
   CellData: string;
   ExtraParams: string;
+  aRowColor, aRowExtraParams: string;
 begin
   try
     // Header
@@ -227,7 +233,19 @@ begin
       fDataSet.First;
       while not fDataSet.EOF do
       begin
-        Result:= Result + '<tr bgcolor="' + fDefaultRowColor + '">';
+        aRowColor:= fDefaultRowColor;
+        // Row event
+        aRowExtraParams:= '';
+        if Assigned(fOnDrawRow) then
+        begin
+          fOnDrawRow(self, fDataSet, fDataSet.RecNo - 1, aRowColor, aRowExtraParams);
+        end;
+
+        Result:= Result + '<tr ';
+        if aRowColor <> '' then
+          Result:= Result + 'bgcolor="' + aRowColor + '" ';
+        Result:= Result + aRowExtraParams + ' >';
+
         for x:= 0 to fDataSet.FieldCount -1 do
         if fDataSet.Fields[x].Visible then
         begin
