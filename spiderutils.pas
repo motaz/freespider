@@ -118,6 +118,8 @@ type
     fContent: TStringList;
     fCustomHeader: TStringList;
     fContentType: string;
+    fResponseCode: Integer;
+    fResponseString: string;
   public
     procedure SetCookie(AName, AValue, APath: string; ExpiresInGMT: TDateTime = -1);
     procedure DeleteCookie(AName, APath: string);
@@ -133,6 +135,9 @@ type
 
     constructor Create;
     destructor Destroy; override;
+
+    property ResponseCode:Integer read fResponseCode write fResponseCode;
+    property ResponseString:String read fResponseString write fResponseString;
 
     // HTML Tags
     procedure NewLine(NumOfNewLines: Integer = 1);
@@ -297,6 +302,8 @@ begin
   fCookieList:= TStringList.Create;
   fCustomHeader:= TStringList.Create;
   fContentType:= 'TEXT/HTML';
+  fResponseCode := 200;
+  fResponseString := 'OK';
 end;
 
 destructor TSpiderResponse.Destroy;

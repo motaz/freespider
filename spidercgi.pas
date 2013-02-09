@@ -77,7 +77,7 @@ var
   APath: string;
   dmc: TDataModuleClass;
   DataMod: TDataModule;
-
+  httpVer: string;
 begin
   try
     if (not fEnabled) or
@@ -115,6 +115,10 @@ begin
     // triger SpiderCGI action when no path action found
     if (Not Found) and (Assigned(fOnRequest)) then
         fOnRequest(Self, fRequest, fResponse);
+
+    //Response code
+    httpVer := 'STATUS: ' + IntToStr(Response.ResponseCode) + ' ' + Response.ResponseString;
+    Writeln(httpVer);
 
     // Put cookies
     for i:= 0 to Response.CookieList.Count - 1 do
