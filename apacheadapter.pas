@@ -22,7 +22,7 @@ interface
 
 
 uses
-  Classes, SysUtils, httpd, apr, SpiderApache, SpiderUtils, SpiderCGI, syncobjs;
+  Classes, SysUtils, httpd, apr, SpiderApache, SpiderUtils, syncobjs;
 
 function ProcessHandler(r: Prequest_rec; WebModule: TDataModuleClass; ModuleName,
   HandlerName: string; ThreadPool: Boolean = True): Integer;
